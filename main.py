@@ -28,24 +28,31 @@ with st.form("event_form"):
     submitted = st.form_submit_button("Submit Event")
 
     if submitted:
-        # Combine date and time into datetime strings
-        datetime_start = datetime.combine(date_start, time_start).strftime("%Y-%m-%d %H:%M:%S")
-        datetime_end = datetime.combine(date_end, time_end).strftime("%Y-%m-%d %H:%M:%S")
+        # Combine date and time into datetime objects
+        datetime_start_obj = datetime.combine(date_start, time_start)
+        datetime_end_obj = datetime.combine(date_end, time_end)
 
-        try:
-            conn = create_connection()
-            cursor = conn.cursor()
-            cursor.execute("""
-                INSERT INTO event (description, date_start, date_end)
-                VALUES (%s, %s, %s)
-            """, (description, datetime_start, datetime_end))
-            conn.commit()
+        # Validate: End datetime must not be before start datetime
+        if datetime_end_obj < datetime_start_obj:
+            st.error("❌ End date and time cannot be before start date and time.")
+        else:
+            datetime_start = datetime_start_obj.strftime("%Y-%m-%d %H:%M:%S")
+            datetime_end = datetime_end_obj.strftime("%Y-%m-%d %H:%M:%S")
 
-            event_id = cursor.lastrowid  # get the inserted event_id
+            try:
+                conn = create_connection()
+                cursor = conn.cursor()
+                cursor.execute("""
+                    INSERT INTO event (description, date_start, date_end)
+                    VALUES (%s, %s, %s)
+                """, (description, datetime_start, datetime_end))
+                conn.commit()
 
-            cursor.close()
-            conn.close()
+                event_id = cursor.lastrowid  # get the inserted event_id
 
-            st.success(f"Event '{description}' berhasil dimasukkan! dengan Event ID: {event_id}")
-        except Error as e:
-            st.error(f"Insert error: {e}")
+                cursor.close()
+                conn.close()
+
+                st.success(f"✅ Event '{description}' berhasil dimasukkan! dengan Event ID: {event_id}")
+            except Error as e:
+                st.error(f"❌ Insert error: {e}")
