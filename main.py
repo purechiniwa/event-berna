@@ -25,7 +25,7 @@ with st.form("event_form"):
     date_end = st.date_input("End Date")
     time_end = st.time_input("End Time")
 
-    submitted = st.form_submit_button("Submit Event")
+    submitted = st.form_submit_button("✅ Submit Event")
 
     if submitted:
         # Combine date and time into datetime objects
@@ -56,3 +56,4 @@ with st.form("event_form"):
                 st.success(f"✅ Event '{description}' berhasil dimasukkan! dengan Event ID: {event_id}")
             except Error as e:
                 st.error(f"❌ Insert error: {e}")
+
