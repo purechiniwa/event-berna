@@ -50,22 +50,23 @@ with st.form("event_form"):
             year = date_end.strftime("%Y")
 
             # Build ID: ekm-11/11-09-2025
-            event_id = f"{initials}-{start_day}/{start_month}-{end_day}-{year}"
+            event_code = f"{initials}-{start_day}/{start_month}-{end_day}-{year}"
 
             try:
                 conn = create_connection()
                 cursor = conn.cursor()
 
                 cursor.execute("""
-                    INSERT INTO event (event_id, description, date_start, date_end)
+                    INSERT INTO event (event_code, description, date_start, date_end)
                     VALUES (%s, %s, %s, %s)
-                """, (event_id, description, datetime_start, datetime_end))
+                """, (event_code, description, datetime_start, datetime_end))
                 conn.commit()
 
                 cursor.close()
                 conn.close()
 
-                st.success(f"✅ Event '{description}' berhasil dimasukkan! Event ID: {event_id}")
+                st.success(f"✅ Event '{description}' berhasil dimasukkan! Event ID: {event_code}")
 
             except Error as e:
                 st.error(f"❌ Insert error: {e}")
+
