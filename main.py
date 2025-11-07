@@ -43,14 +43,30 @@ with st.form("event_form"):
             initials = ''.join([word[0] for word in description.split() if word.isalpha()]).lower()
             initials = re.sub(r'[^a-z]', '', initials)
 
-            # Extract parts for formatting
+            # Extract date parts
             start_day = date_start.strftime("%d")
             start_month = date_start.strftime("%m")
+            start_year = date_start.strftime("%Y")
+            
             end_day = date_end.strftime("%d")
-            year = date_end.strftime("%Y")
-
-            # Build ID: ekm-11/11-09-2025
-            event_code = f"{initials}-{start_day}/{end_day}-{end_month}-{year}"
+            end_month = date_end.strftime("%m")
+            end_year = date_end.strftime("%Y")
+            
+            # Build ID dynamically
+            if start_year == end_year:
+                if start_month == end_month:
+                    if start_day == end_day:
+                        # Same day, month, and year
+                        event_code = f"{initials}-{start_day}-{start_month}-{start_year}"
+                    else:
+                        # Same month/year, different day
+                        event_code = f"{initials}-{start_day}/{end_day}-{start_month}-{start_year}"
+                else:
+                    # Same year, different month
+                    event_code = f"{initials}-{start_day}-{start_month}/{end_day}-{end_month}-{start_year}"
+            else:
+                # Different year
+                event_code = f"{initials}-{start_day}-{start_month}-{start_year}/{end_day}-{end_month}-{end_year}"
 
             try:
                 conn = create_connection()
@@ -69,5 +85,6 @@ with st.form("event_form"):
 
             except Error as e:
                 st.error(f"❌ Insert error: {e}")
+
 
 
