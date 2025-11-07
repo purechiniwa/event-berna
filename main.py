@@ -50,7 +50,7 @@ with st.form("event_form"):
             year = date_end.strftime("%Y")
 
             # Build ID: ekm-11/11-09-2025
-            event_code = f"{initials}-{start_day}/{start_month}-{end_day}-{year}"
+            event_code = f"{initials}-{start_day}/{end_day}-{end_month}-{year}"
 
             try:
                 conn = create_connection()
@@ -69,4 +69,5 @@ with st.form("event_form"):
 
             except Error as e:
                 st.error(f"❌ Insert error: {e}")
+
 
